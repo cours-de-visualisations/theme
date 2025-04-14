@@ -62,4 +62,23 @@ ugly_plot
 
 ```{r}
 # Enregistrez le tracé au format PNG avec ggsave()
+ugly_plot <- ggplot(data = space_dogs_summarized, 
+                    mapping = aes(x = Fate_binary, y = total_flights, fill = Gender)) +
+  geom_bar(stat = "identity", position = "dodge", color = "limegreen", size = 3) +
+  scale_fill_manual(values = c("purple", "orange")) +
+  labs(
+    title = "Nombre de vols par sort et genre des chiens soviétiques",
+    x = "Sort du chien (moche!)",
+    y = "Vols (encore plus moche!)"
+  ) +
+  theme_dark(base_size = 25, base_family = "Comic Sans MS") +
+  theme(
+    plot.background = element_rect(fill = "pink", color = "red", size = 3),
+    panel.grid.major = element_line(color = "yellow", linetype = "dotted", size = 1),
+    axis.text.x = element_text(angle = 45, hjust = 1, color = "blue", face = "bold"),
+    legend.position = "bottom"
+  )
+
+ugly_plot
+
 ```
