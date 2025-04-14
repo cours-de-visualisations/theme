@@ -25,14 +25,11 @@ library(tidyverse)
 space_dogs_raw <- read_csv("data/Dogs-Database.csv")
 
 space_dogs <- space_dogs_raw %>% 
-# La colonne Fate semble indiquer soit "Survived" ou "Dead <DATE>", donc nous faisons
-  # une nouvelle version binaire de la colonne Fate qui est "Survived" si le chien
-  # a survécu et "Died" sinon
-  mutate(Fate_binary = ifelse(Fate == "Survived", "Survived", "Died")) %>% 
-# Les données répertorient les dates de chaque vol, séparées par une virgule. Pour les convertir
-  # en nombre, on utilise une petite astuce : compter le nombre de virgules dans la
-  # cellule et ajoutez 1 (s'il y avait 2 vols, il y aurait 1 virgule, etc.)
-  mutate(Flights_num = str_count(Flights, ",") + 1)
+  mutate(
+    Fate_binary = ifelse(Fate == "Survived", "Survived", "Died"),
+    Flights_num = str_count(Flights, ",") + 1
+  )
+
 ```
 
 Il y a en fait des tendances intéressantes ici! Les chiennes étaient beaucoup moins susceptibles de mourir et effectuaient beaucoup plus de vols que leurs homologues masculins, mais c'est en partie parce que l'URSS n'utilisait presque que des chiens mâles de 1951 à 1954, de sorte que ces chiens ont dû faire face aux premiers prototypes de fusées et de capsules.
@@ -41,10 +38,14 @@ Il y a en fait des tendances intéressantes ici! Les chiennes étaient beaucoup 
 # On résume les données par fate et gender
 space_dogs_summarized <- space_dogs %>% 
   group_by(Fate_binary, Gender) %>% 
-  summarize(total_dogs = n(),
-            total_flights = sum(Flights_num))
+  summarize(
+    total_dogs = n(),
+    total_flights = sum(Flights_num),
+    .groups = "drop"
+  )
 
-space_dogs_summarized
+
+
 ```
 
 ## Graphique laid
@@ -52,16 +53,6 @@ space_dogs_summarized
 Mais les tendances n'ont pas d'importance ici. Ce qui compte, ce sont les graphiques hideux. Changez les couleurs, modifiez le thème, ajoutez des étiquettes, etc. et rendez cela moche. Vous pouvez laisser le `geom_pointrange ()` tel quel, ou vous pouvez également le modifier (ou même le changer en un graphique à barres ou un graphique à en tarte ou une heatmap ou autre chose si vous vous sentez à la hauteur).
 
 ```{r ugly-plot}
-ugly_plot <- ggplot(data = space_dogs_summarized, 
-                    mapping = aes(x = Fate_binary, y = total_flights, color = Gender)) +
-  geom_pointrange(aes(ymin = 0, ymax = total_flights), size = 2, 
-                  position = position_dodge(width = 0.5))
-
-ugly_plot
-```
-
-```{r}
-# Enregistrez le tracé au format PNG avec ggsave()
 ugly_plot <- ggplot(data = space_dogs_summarized, 
                     mapping = aes(x = Fate_binary, y = total_flights, fill = Gender)) +
   geom_bar(stat = "identity", position = "dodge", color = "limegreen", size = 3) +
@@ -80,5 +71,12 @@ ugly_plot <- ggplot(data = space_dogs_summarized,
   )
 
 ugly_plot
+
+```
+
+```{r}
+# Enregistrez le tracé au format PNG avec ggsave()
+ggsave("ugly_plot.png", plot = ugly_plot, width = 10, height = 6, dpi = 300)
+
 
 ```
