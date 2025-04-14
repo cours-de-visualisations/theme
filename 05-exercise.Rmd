@@ -1,7 +1,7 @@
 ---
-title: "Exercice 5"
-author: "Nom"
-date: "date"
+title: "Exercice 6"
+author: "Groupe 5"
+date: "`r Sys.Date()`"
 output: html_document
 ---
 
@@ -19,9 +19,7 @@ Duncan Greere a rassemblé une base de données de 48 chiens soviétiques qui on
 Nous chargeons et nettoyons d'abord les données.
 
 ```{r load-clean-data, warning=FALSE, message=FALSE}
-# Vous n'aurez besoin que de la bibliothèque tidyverse pour cet exercice
 library(tidyverse)
-
 space_dogs_raw <- read_csv("data/Dogs-Database.csv")
 
 space_dogs <- space_dogs_raw %>% 
@@ -35,7 +33,6 @@ space_dogs <- space_dogs_raw %>%
 Il y a en fait des tendances intéressantes ici! Les chiennes étaient beaucoup moins susceptibles de mourir et effectuaient beaucoup plus de vols que leurs homologues masculins, mais c'est en partie parce que l'URSS n'utilisait presque que des chiens mâles de 1951 à 1954, de sorte que ces chiens ont dû faire face aux premiers prototypes de fusées et de capsules.
 
 ```{r summarize-data}
-# On résume les données par fate et gender
 space_dogs_summarized <- space_dogs %>% 
   group_by(Fate_binary, Gender) %>% 
   summarize(
@@ -44,15 +41,13 @@ space_dogs_summarized <- space_dogs %>%
     .groups = "drop"
   )
 
-
-
 ```
 
 ## Graphique laid
 
 Mais les tendances n'ont pas d'importance ici. Ce qui compte, ce sont les graphiques hideux. Changez les couleurs, modifiez le thème, ajoutez des étiquettes, etc. et rendez cela moche. Vous pouvez laisser le `geom_pointrange ()` tel quel, ou vous pouvez également le modifier (ou même le changer en un graphique à barres ou un graphique à en tarte ou une heatmap ou autre chose si vous vous sentez à la hauteur).
 
-```{r ugly-plot}
+```{r ugly-plot, warning=FALSE}
 ugly_plot <- ggplot(data = space_dogs_summarized, 
                     mapping = aes(x = Fate_binary, y = total_flights, fill = Gender)) +
   geom_bar(stat = "identity", position = "dodge", color = "limegreen", size = 3) +
@@ -64,9 +59,9 @@ ugly_plot <- ggplot(data = space_dogs_summarized,
   ) +
   theme_dark(base_size = 25, base_family = "Comic Sans MS") +
   theme(
-    plot.background = element_rect(fill = "pink", color = "red", size = 3),
-    panel.grid.major = element_line(color = "yellow", linetype = "dotted", size = 1),
-    axis.text.x = element_text(angle = 45, hjust = 1, color = "blue", face = "bold"),
+    plot.background = element_rect(fill = "pink", color = "red", size = 9),
+    panel.grid.major = element_line(color = "yellow", linetype = "dotted", size = 6),
+    axis.text.x = element_text(angle = 90,  color = "blue", face = "bold"),
     legend.position = "bottom"
   )
 
@@ -74,7 +69,7 @@ ugly_plot
 
 ```
 
-```{r}
+```{r warning=FALSE}
 # Enregistrez le tracé au format PNG avec ggsave()
 ggsave("ugly_plot.png", plot = ugly_plot, width = 10, height = 6, dpi = 300)
 
